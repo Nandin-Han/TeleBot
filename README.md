@@ -19,21 +19,16 @@ cp config/.env.example .env
 TELEGRAM_BOT_TOKEN=your_bot_token_here
 ```
 
-### 3. 安装依赖
+### 3. 环境设置
 ```bash
+# 使用项目标准虚拟环境
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. 运行机器人
+### 4. 启动机器人
 ```bash
-# 激活虚拟环境并启动
-source venv/bin/activate
-python run.py
-```
-
-或者直接运行：
-```bash
-python run.py
+venv/bin/python run.py  # 直接运行主脚本
 ```
 
 ## 项目结构
@@ -53,9 +48,10 @@ TeleBot/
 ## 功能特性
 
 - ✅ `/start` 命令 - 欢迎新用户
-- 🔄 异步处理 - 高性能并发
+- 🔄 **异步处理** - 高性能并发架构
 - 📝 日志记录 - 便于调试
 - 🔧 模块化设计 - 易于扩展
+- ⚡ 优雅启动/停止 - 完整的资源管理
 
 ## 开发指南
 

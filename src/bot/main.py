@@ -1,6 +1,7 @@
 """
-Telegram Bot 主入口文件
+Telegram Bot 主入口文件 - 异步版本
 """
+import asyncio
 import logging
 import sys
 import os
@@ -15,8 +16,8 @@ sys.path.insert(0, project_root)
 from src.bot.handlers.commands import start_command, help_command
 from src.bot.utils.config import get_bot_token, setup_logging
 
-def main():
-    """启动Telegram机器人"""
+async def main():
+    """启动Telegram机器人 - 异步版本"""
     # 加载环境变量
     load_dotenv()
     
@@ -45,16 +46,30 @@ def main():
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("help", help_command))
     
-    # 启动机器人
+    # 启动机器人 - 异步版本
     logger.info("🤖 Telegram Bot 启动成功！正在监听消息...")
     print("🤖 Telegram Bot 正在运行中... (按 Ctrl+C 停止)")
     
-    # 运行轮询 - 使用同步版本
-    app.run_polling(drop_pending_updates=True)
+    # 使用正确的异步启动方式
+    async with app:
+        await app.start()
+        await app.updater.start_polling(drop_pending_updates=True)
+        
+        # 保持运行，等待 KeyboardInterrupt
+        try:
+            # 创建一个永远不会完成的 Future，保持程序运行
+            stop_signal = asyncio.Event()
+            await stop_signal.wait()
+        except asyncio.CancelledError:
+            logger.info("收到停止信号...")
+        finally:
+            # 清理资源
+            await app.updater.stop()
+            await app.stop()
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("\n👋 机器人已停止运行")
     except Exception as e:
