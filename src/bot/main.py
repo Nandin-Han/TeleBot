@@ -4,14 +4,21 @@ Telegram Bot 主入口文件 - 同步版本
 import sys
 import os
 from dotenv import load_dotenv
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 from loguru import logger
+from .handlers.commands import (
+    start_command, 
+    help_command, 
+    update_command,
+    project_command,
+    handle_project_callback,
+)
 
 # 添加项目根目录到路径
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
 
-from src.bot.handlers.commands import start_command, help_command, update_command, handle_update_callback
+from src.bot.handlers.commands import start_command, help_command, update_command
 from src.bot.handlers.messages import handle_text_message
 from src.bot.utils.config import get_bot_token, setup_logging
 
@@ -50,10 +57,12 @@ def main():
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("update", update_command))
+    app.add_handler(CommandHandler("project", project_command))
+
     
-    # 注册回调查询处理器
-    app.add_handler(CallbackQueryHandler(handle_update_callback, pattern='^update_'))
-    
+    # 注册回调处理器
+    app.add_handler(CallbackQueryHandler(handle_project_callback, pattern='^project_'))    
+
     # 注册消息处理器
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text_message))
     
