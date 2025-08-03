@@ -8,6 +8,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 from loguru import logger
 
+# Load environment variables from .env file
+load_dotenv()
+
 def get_bot_token() -> str:
     """
     获取机器人Token
@@ -30,20 +33,12 @@ def setup_logging():
     # 移除默认的 logger
     logger.remove()
     
-    # 控制台日志格式
-    console_format = (
-        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-        "<level>{level: <8}</level> | "
-        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
-        "<level>{message}</level>"
-    )
-    
-    # 添加控制台输出
+    # 控制台日志格式 - 简化版本避免编码问题
     logger.add(
         sys.stdout,
-        format=console_format,
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
         level=os.getenv("LOG_LEVEL", "INFO"),
-        colorize=True
+        colorize=False
     )
     
     # 确保日志目录存在
@@ -53,11 +48,12 @@ def setup_logging():
     # 添加文件日志
     logger.add(
         "logs/telebot.log",
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
         level="DEBUG",
         rotation="1 day",
         retention="7 days",
-        compression="zip"
+        compression="zip",
+        encoding="utf-8"
     )
     
     logger.info("日志系统初始化完成")
