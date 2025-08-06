@@ -806,7 +806,7 @@ async def execute_project_command(project_name: str, action_type: str, tag: Opti
             logger.info("脚本同步成功")
             
             # 2. 执行远程部署命令
-            ssh_command = f'ssh -i /opt/vscode/Ops_file/.id_rsa_deployer deployer@172.31.40.106 "bash /home/deployer/scripts/pre/{project_name}.sh {action_type} {tag}"'
+            ssh_command = f'ssh -i /opt/vscode/Ops_file/.id_rsa_deployer deployer@172.31.40.106 -p 61254 "bash /home/deployer/scripts/pre/{project_name}.sh {action_type} {tag}"'
             logger.info(f"执行SSH命令: {ssh_command}")
             
             ssh_result = subprocess.run(
